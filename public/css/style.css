@@ -1,0 +1,9 @@
+div{
+  padding: 25px;
+}
+code {
+  background-color: rgb(240, 240, 240);
+  border-radius: 4px;
+  font-size: 90%;
+  padding: 2px 4px;
+}
