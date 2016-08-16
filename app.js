@@ -116,9 +116,23 @@ app.get(/^\/([a-z0-9]{4}$)/, function(req, res) {
 
     //redirect user to the original URL contained in the document
     searchID.then((doc) => {
-      console.log("Search for id complete. Redirecting client.");
-      db.close();
-      res.redirect(doc[0].originalURL);
+      console.log("Searching for id.");
+
+      //id was found, redirect client
+      if(doc.length > 0){
+        console.log("Search for id complete. Redirecting client.");
+        db.close();
+        res.redirect(doc[0].originalURL);
+      }
+
+      //id was not found in database return error json
+      else {
+        console.log("ID not found. Responding with error JSON.");
+        db.close();
+        res.json({
+          error: "Invalid URL."
+        });
+      }
     }).catch((err) => {
       console.log(err);
     });
