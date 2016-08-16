@@ -24,7 +24,7 @@ app.get(/^\/(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-
   console.log("URL Passed to API: " + url);
 
   mongo.connect(mlabURI).then((db) => {
-    console.log("Connected to DB at: " + mlabURI);
+    console.log("Connected to DB at mLab.");
     //open the collection of links
     var links = db.collection('links');
 
@@ -100,12 +100,12 @@ app.get(/^\/(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-
 });
 
 //route for the input of a shortened url to redirect
-app.get(/([a-z0-9]{4})/, function(req, res) {
+app.get(/^\/([a-z0-9]{4}$)/, function(req, res) {
   var id = req.params[0]; //get the passed id via the first capture group from the RegEx
   console.log("Valid ID passed: " + id);
 
   mongo.connect(mlabURI).then((db) => {
-    console.log("Connected to DB at: " + mlabURI);
+    console.log("Connected to DB at mLab.");
     //open the collection of links
     var links = db.collection('links');
 
@@ -114,6 +114,7 @@ app.get(/([a-z0-9]{4})/, function(req, res) {
       _id: id
     }).toArray();
 
+    //redirect user to the original URL contained in the document
     searchID.then((doc) => {
       console.log("Search for id complete. Redirecting client.");
       db.close();
@@ -124,6 +125,13 @@ app.get(/([a-z0-9]{4})/, function(req, res) {
 
   }).catch((err) => {
     console.log(err);
+  });
+});
+
+app.get('/*', function(req, res){
+  console.log("Invalid URL passed. Responding with error JSON.");
+  res.json({
+    error: "Invalid URL."
   });
 });
 
